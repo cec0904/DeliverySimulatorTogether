@@ -6,7 +6,14 @@
 #include "GameFramework/Pawn.h"
 #include "../Character/DST_Character.h"
 #include "../../DSTogetherCharacter.h"
+#include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "DST_Vehicle.generated.h"
+
+class ADSTogetherCharacter;
+class UBoxComponent;
+class UInputAction;
+class USceneComponent;
 
 UCLASS()
 class DSTOGETHER_API ADST_Vehicle : public APawn
@@ -41,8 +48,8 @@ public:
 	// 페달
 	enum DriveState
 	{
-		Accelerator,
-		Break,
+		Throttle,
+		Brake,
 		Clutch
 	};
 
@@ -67,11 +74,29 @@ public:
 		Stage6
 	};
 
-	// 차량의 속도
-	float MaxSpeed = 1.f;
-
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vehicle")
+	TObjectPtr<UBoxComponent> VehicleCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ride")
+	TArray<TObjectPtr<USceneComponent>> SeatPoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ride")
+	TObjectPtr<USceneComponent> GetOffPoint = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TObjectPtr<UInputAction> ThrottleAction = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TObjectPtr<UInputAction> BrakeAction = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drive")
+	float MaxSpeed = 600.f;
+
+	GearPosition CurrentGear = Drive;
+
+
 	// 차량 탑승 -> 좌석 확인 -> 좌석에서 떨어짐 -> 차량 하차
 
 	// 좌석에 앉을 때 누가 앉아있는지 판단
@@ -92,18 +117,15 @@ public:
 
 
 
-	//// 운전관련
-	//UFUNCTION(BlueprintCallable, Category = "Ride")
-	//void Accelerator();
-
-	//UFUNCTION(BlueprintCallable, Category = "Ride")
-	//void Break();
-
-	//UFUNCTION(BlueprintCallable, Category = "Ride")
-	//void Clutch();
 
 
+private:
+	float ThrottleInput = 0.f;
+	float BrakeInput = 0.f;
 
+	void OnThrottle(const FInputActionValue& Value);
+	void OnThrottleReleased(const FInputActionValue& Value);
+	void OnBrakeReleased(const FInputActionValue& Value);
 
 
 };

@@ -59,6 +59,8 @@ void ADSTogetherCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADSTogetherCharacter::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ADSTogetherCharacter::LookInput);
+
+		EnhancedInputComponent->BindAction(RideAction, ETriggerEvent::Started, this, &ADSTogetherCharacter::RideInput);
 	}
 	else
 	{
@@ -84,6 +86,12 @@ void ADSTogetherCharacter::LookInput(const FInputActionValue& Value)
 
 	// pass the axis values to the aim input
 	DoAim(LookAxisVector.X, LookAxisVector.Y);
+
+}
+
+void ADSTogetherCharacter::RideInput()
+{
+	// 차량 밖의 가까운 곳으로 스폰
 
 }
 
@@ -118,3 +126,4 @@ void ADSTogetherCharacter::DoJumpEnd()
 	// pass StopJumping to the character
 	StopJumping();
 }
+
